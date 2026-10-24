@@ -1,0 +1,8 @@
+{
+  "name": "SG GRAND Hotel & Suites Machilipatnam",
+  "description": "Direct Booking Engine & Luxury Hotel Portal for SG GRAND, Machilipatnam. Best Rate Guarantee, zero commission, and WhatsApp concierge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
