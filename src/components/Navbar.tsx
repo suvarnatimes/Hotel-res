@@ -27,17 +27,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   return (
     <header className="sticky top-0 z-40 bg-[#0F172A] border-b border-slate-800 text-white shadow-md">
       {/* Top Value Banner */}
-      <div className="bg-[#1e293b] border-b border-slate-800/80 px-4 py-1.5 text-xs">
+      <div className="bg-[#1e293b] border-b border-slate-800/80 px-4 py-1.5 text-xs overflow-hidden w-full max-w-full">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-slate-300 overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="inline-flex items-center gap-1 text-[#C5A880] font-semibold">
+          <div className="flex items-center gap-2 text-slate-300 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] sm:text-xs">
+            <span className="inline-flex items-center gap-1 text-[#C5A880] font-semibold shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
-              Direct Booking Guarantee:
+              Direct Booking:
             </span>
-            <span>Save ₹300/night vs MMT · Free Early Check-in · 0% Commission</span>
+            <span className="truncate">Save ₹300/night vs MMT · Free Early Check-in · 0% Commission</span>
           </div>
 
-          <div className="hidden md:flex items-center gap-5 text-xs text-slate-300">
+          <div className="hidden md:flex items-center gap-5 text-xs text-slate-300 shrink-0">
             <span className="flex items-center gap-1.5">
               <MapPin className="w-3 h-3 text-[#C5A880]" />
               Opp. Brundavan Theater, Godugupet

@@ -3,7 +3,6 @@ import {
   Calendar,
   BedDouble,
   Users,
-  CreditCard,
   Building,
   MessageCircle,
   CheckCircle2,
@@ -11,10 +10,8 @@ import {
   ShieldCheck,
   ArrowRight,
   ArrowLeft,
-  Clock,
   Printer,
   QrCode,
-  FileText,
   Phone,
   Mail,
   User,
@@ -26,7 +23,6 @@ import {
   calculateBookingPrice,
   buildWhatsAppBookingUrl,
   generateBookingReference,
-  formatINR,
 } from '../utils/bookingCalculations';
 
 interface BookingFlowPageProps {
@@ -45,7 +41,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-  // Step 1: Dates & Rooms State
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [roomId, setRoomId] = useState<string>(initialRoomId);
   const [checkIn, setCheckIn] = useState<string>(initialCheckIn || todayStr);
@@ -54,7 +49,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
 
-  // Step 2: Guest Details State
   const [fullName, setFullName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -63,7 +57,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
   const [specialRequests, setSpecialRequests] = useState<string>('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Step 3 & 4: Confirmation & Voucher State
   const [paymentOption, setPaymentOption] = useState<'online' | 'pay_at_hotel' | 'whatsapp'>('online');
   const [confirmedBookingRef, setConfirmedBookingRef] = useState<string>('');
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
@@ -141,7 +134,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
       return;
     }
 
-    // Pay at hotel:
     const ref = generateBookingReference();
     setConfirmedBookingRef(ref);
     setStep(4);
@@ -165,20 +157,20 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
   };
 
   return (
-    <div className="py-10 bg-slate-50 min-h-screen">
+    <div className="py-8 sm:py-12 bg-slate-50 min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Progress Step Indicator */}
         {step < 4 && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <div className="mb-6">
+            <div className="flex items-center justify-between max-w-xl mx-auto bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
               {[
                 { number: 1, label: 'Dates & Room' },
                 { number: 2, label: 'Guest Details' },
                 { number: 3, label: 'Confirmation' },
               ].map((s) => (
-                <div key={s.number} className="flex items-center gap-2">
+                <div key={s.number} className="flex items-center gap-1.5 sm:gap-2">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors ${
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors shrink-0 ${
                       step >= s.number
                         ? 'bg-[#0F172A] text-[#C5A880] ring-2 ring-[#C5A880]'
                         : 'bg-slate-200 text-slate-500'
@@ -187,8 +179,8 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                     {step > s.number ? '✓' : s.number}
                   </div>
                   <span
-                    className={`text-xs font-semibold hidden sm:inline ${
-                      step >= s.number ? 'text-slate-900' : 'text-slate-400'
+                    className={`text-xs font-semibold ${
+                      step === s.number ? 'text-slate-900 block' : 'text-slate-400 hidden sm:inline'
                     }`}
                   >
                     {s.label}
@@ -201,25 +193,23 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
 
         {/* STEP 1: Select Dates & Room Tier */}
         {step === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left 7 Cols: Date & Room Inputs */}
-            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+            <div className="lg:col-span-7 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-md">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                 <div>
-                  <h1 className="text-2xl font-serif font-bold text-slate-900">
+                  <h1 className="text-xl sm:text-2xl font-serif font-bold text-slate-900">
                     Step 1: Choose Dates & Room
                   </h1>
                   <p className="text-xs text-slate-500 mt-0.5">
                     Guaranteed lowest direct rates with free early check-in.
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                  Best Rate Guarantee
+                <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                  Best Direct Rate
                 </span>
               </div>
 
-              {/* Dates Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-4">
                 <div>
                   <label htmlFor="step1-checkin" className="block text-xs font-semibold text-slate-700 mb-1">
                     Check-In Date (from 12:00 PM)
@@ -230,7 +220,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                     min={todayStr}
                     value={checkIn}
                     onChange={(e) => handleCheckInChange(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm font-medium focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                   />
                 </div>
                 <div>
@@ -243,13 +233,12 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                     min={checkIn}
                     value={checkOut}
                     onChange={(e) => setCheckOut(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm font-medium focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                   />
                 </div>
               </div>
 
-              {/* Room Tiers Selector Radio Cards */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3 mb-5">
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
                   Select Room Category:
                 </label>
@@ -260,17 +249,17 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                       type="button"
                       key={tier.id}
                       onClick={() => setRoomId(tier.id)}
-                      className={`w-full p-4 rounded-2xl text-left border transition-all flex items-center justify-between gap-4 ${
+                      className={`w-full p-3.5 sm:p-4 rounded-2xl text-left border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
                         isSelected
                           ? 'bg-[#0F172A] text-white border-[#C5A880] ring-1 ring-[#C5A880] shadow-md'
-                          : 'bg-slate-50 text-slate-900 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                          : 'bg-slate-50 text-slate-900 border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      <div className="flex items-center gap-3.5">
+                      <div className="flex items-center gap-3">
                         <img
                           src={tier.featuredImage}
                           alt={tier.name}
-                          className="w-16 h-16 rounded-xl object-cover shrink-0"
+                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shrink-0"
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -286,20 +275,17 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                             </span>
                           </div>
                           <p className={`text-xs mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
-                            {tier.bedType} · Up to {tier.maxAdults} Adults
+                            {tier.bedType}
                           </p>
                         </div>
                       </div>
 
-                      <div className="text-right shrink-0">
+                      <div className="sm:text-right shrink-0 w-full sm:w-auto flex sm:flex-col justify-between sm:justify-center items-center sm:items-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-700/50">
                         <div className="text-sm sm:text-base font-bold font-sans">
                           ₹{tier.directPrice.toLocaleString('en-IN')}
                           <span className="text-[10px] font-normal opacity-80">/nt</span>
                         </div>
-                        <span className="text-[11px] line-through text-slate-400 block">
-                          ₹{tier.otaPrice.toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-[10px] text-emerald-400 font-semibold">
+                        <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-950/40 px-1.5 py-0.5 rounded sm:bg-transparent sm:p-0">
                           Save ₹{tier.savingsPerNight}
                         </span>
                       </div>
@@ -308,17 +294,16 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 })}
               </div>
 
-              {/* Rooms & Occupancy Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100">
+              <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100">
                 <div>
-                  <label htmlFor="step1-roomscount" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Rooms Count
+                  <label htmlFor="step1-rooms" className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    Rooms
                   </label>
                   <select
-                    id="step1-roomscount"
+                    id="step1-rooms"
                     value={roomsCount}
                     onChange={(e) => setRoomsCount(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
+                    className="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
                   >
                     {[1, 2, 3, 4, 5].map((n) => (
                       <option key={n} value={n}>
@@ -328,14 +313,14 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="step1-adults" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Adults (12+ yrs)
+                  <label htmlFor="step1-adults" className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    Adults
                   </label>
                   <select
                     id="step1-adults"
                     value={adults}
                     onChange={(e) => setAdults(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
+                    className="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
                   >
                     {[1, 2, 3, 4, 5, 6].map((n) => (
                       <option key={n} value={n}>
@@ -345,47 +330,46 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="step1-children" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Children (0–11 yrs)
+                  <label htmlFor="step1-kids" className="block text-[11px] font-semibold text-slate-700 mb-1">
+                    Kids
                   </label>
                   <select
-                    id="step1-children"
+                    id="step1-kids"
                     value={children}
                     onChange={(e) => setChildren(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
+                    className="w-full px-2 py-2 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-xs font-medium focus:ring-2 focus:ring-[#C5A880]"
                   >
                     {[0, 1, 2, 3].map((n) => (
                       <option key={n} value={n}>
-                        {n} {n === 1 ? 'Child' : 'Children'}
+                        {n} Kids
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Action Button */}
-              <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+              <div className="mt-5 pt-3 border-t border-slate-100 flex justify-end">
                 <button
                   type="button"
                   onClick={handleProceedToStep2}
-                  className="w-full sm:w-auto px-6 py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 border border-[#C5A880]/40"
+                  className="w-full min-h-[46px] px-6 py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 border border-[#C5A880]/40"
                 >
                   <span>Continue to Guest Details</span>
-                  <ArrowRight className="w-4 h-4 text-[#C5A880]" />
+                  <ArrowRight className="w-4 h-4 text-[#C5A880] shrink-0" />
                 </button>
               </div>
             </div>
 
-            {/* Right 5 Cols: Price & Tariff Summary Breakdown */}
-            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md">
-              <h2 className="text-lg font-serif font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center justify-between">
+            {/* Price Summary Panel */}
+            <div className="lg:col-span-5 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-md">
+              <h2 className="text-lg font-serif font-bold text-slate-900 pb-2.5 border-b border-slate-100 flex items-center justify-between">
                 <span>Stay Price Breakdown</span>
-                <span className="text-xs font-sans text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-semibold">
-                  Zero Commission
+                <span className="text-[11px] font-sans text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold">
+                  Zero Fees
                 </span>
               </h2>
 
-              <div className="py-4 space-y-3 text-xs text-slate-700">
+              <div className="py-3.5 space-y-2.5 text-xs text-slate-700">
                 <div className="flex justify-between">
                   <span>Room Tier:</span>
                   <strong className="text-slate-900">{selectedRoom.name}</strong>
@@ -393,10 +377,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <div className="flex justify-between">
                   <span>Stay Duration:</span>
                   <span>{nights} {nights === 1 ? 'Night' : 'Nights'} ({checkIn} to {checkOut})</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Rooms & Occupancy:</span>
-                  <span>{roomsCount} Room(s) · {adults} Adults{children > 0 ? `, ${children} Kids` : ''}</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-slate-100">
                   <span>Base Tariff ({roomsCount} Room × {nights} Nts):</span>
@@ -408,13 +388,8 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                   <span>Applicable GST (12%):</span>
                   <span>₹{price.gstAmount.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-slate-500">
-                  <span>OTA Convenience Fee:</span>
-                  <span className="text-emerald-700 font-semibold">₹0 (Waived)</span>
-                </div>
               </div>
 
-              {/* Total Box */}
               <div className="p-4 bg-slate-900 rounded-2xl text-white space-y-2 mt-2">
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs text-slate-300">Total Direct Amount:</span>
@@ -429,25 +404,9 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-emerald-400 font-bold">
                   <span className="flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5" />
-                    You Save Direct:
+                    Direct Savings:
                   </span>
                   <span>₹{price.totalDirectSavings.toLocaleString('en-IN')}</span>
-                </div>
-              </div>
-
-              {/* Direct Perks List */}
-              <div className="mt-5 space-y-1.5 text-xs text-slate-600">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Free Early Check-in from 10:00 AM (Subject to availability)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>24/7 Silent Generator Power Backup Guarantee</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Direct WhatsApp Concierge support</span>
                 </div>
               </div>
             </div>
@@ -456,14 +415,14 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
 
         {/* STEP 2: Guest Details Form */}
         {step === 2 && (
-          <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-md">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-md">
+            <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
               <div>
-                <h1 className="text-2xl font-serif font-bold text-slate-900">
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-slate-900">
                   Step 2: Guest Information
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Mandatory hotel registry & check-in details.
+                  Hotel registry & check-in details.
                 </p>
               </div>
               <button
@@ -471,18 +430,17 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 onClick={() => setStep(1)}
                 className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to Dates
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
             </div>
 
             <form onSubmit={handleProceedToStep3} className="space-y-4">
-              {/* Full Name */}
               <div>
                 <label htmlFor="step2-fullname" className="block text-xs font-semibold text-slate-700 mb-1">
                   Primary Guest Full Name (as per Govt ID) *
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                  <User className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
                   <input
                     id="step2-fullname"
                     type="text"
@@ -490,7 +448,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                     placeholder="e.g. Rajesh Kumar Sharma"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                   />
                 </div>
                 {formErrors.fullName && (
@@ -500,14 +458,13 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 )}
               </div>
 
-              {/* Phone & Email Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="step2-phone" className="block text-xs font-semibold text-slate-700 mb-1">
                     Mobile Number (for WhatsApp Confirmation) *
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
                     <input
                       id="step2-phone"
                       type="tel"
@@ -515,7 +472,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                       placeholder="e.g. 9876543210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                     />
                   </div>
                   {formErrors.phone && (
@@ -527,10 +484,10 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
 
                 <div>
                   <label htmlFor="step2-email" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Email Address (for Booking Voucher & GST Invoice) *
+                    Email Address (for Booking Voucher & GST) *
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
                     <input
                       id="step2-email"
                       type="email"
@@ -538,7 +495,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                       placeholder="e.g. rajesh@company.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                     />
                   </div>
                   {formErrors.email && (
@@ -549,17 +506,16 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 </div>
               </div>
 
-              {/* Govt ID Type & Estimated Arrival Time */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="step2-govtid" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Govt ID Type (to present at front desk) *
+                    Govt ID Type *
                   </label>
                   <select
                     id="step2-govtid"
                     value={govtIdType}
                     onChange={(e) => setGovtIdType(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880]"
                   >
                     <option value="Aadhaar Card">Aadhaar Card</option>
                     <option value="Passport">Passport</option>
@@ -576,7 +532,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                     id="step2-arrival"
                     value={arrivalTime}
                     onChange={(e) => setArrivalTime(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880]"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880]"
                   >
                     <option value="10:00 AM - 12:00 PM (Early Check-In Request)">
                       10:00 AM - 12:00 PM (Early Check-In Request)
@@ -595,7 +551,6 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 </div>
               </div>
 
-              {/* Special Requests */}
               <div>
                 <label htmlFor="step2-requests" className="block text-xs font-semibold text-slate-700 mb-1">
                   Special Requests / GST Details (Optional)
@@ -605,13 +560,12 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                   rows={2}
                   value={specialRequests}
                   onChange={(e) => setSpecialRequests(e.target.value)}
-                  placeholder="e.g. Near elevator, extra towels, GSTIN for corporate invoice, travel cab pickup from Machilipatnam railway station"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
+                  placeholder="e.g. Near elevator, GSTIN for corporate invoice"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base sm:text-sm focus:ring-2 focus:ring-[#C5A880] focus:bg-white"
                 />
               </div>
 
-              {/* Buttons */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
@@ -621,26 +575,26 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg transition-all active:scale-95 border border-[#C5A880]/40"
+                  className="w-full sm:w-auto px-6 py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 border border-[#C5A880]/40 min-h-[46px]"
                 >
                   <span>Select Payment & Confirm</span>
-                  <ArrowRight className="w-4 h-4 text-[#C5A880]" />
+                  <ArrowRight className="w-4 h-4 text-[#C5A880] shrink-0" />
                 </button>
               </div>
             </form>
           </div>
         )}
 
-        {/* STEP 3: Confirmation Options (Option A, B, C) */}
+        {/* STEP 3: Confirmation Options */}
         {step === 3 && (
-          <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-md">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-md">
+            <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
               <div>
-                <h1 className="text-2xl font-serif font-bold text-slate-900">
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-slate-900">
                   Step 3: Select Confirmation Option
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Total Payable: <strong className="text-slate-900 font-sans">₹{price.totalDirectAmount.toLocaleString('en-IN')}</strong> (including 12% GST)
+                  Total Payable: <strong className="text-slate-900 font-sans">₹{price.totalDirectAmount.toLocaleString('en-IN')}</strong>
                 </p>
               </div>
               <button
@@ -652,38 +606,21 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
               </button>
             </div>
 
-            {/* Quick Guest Summary Banner */}
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-6 text-xs text-slate-700 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                Guest: <strong className="text-slate-900">{fullName}</strong> ({phone})
-              </div>
-              <div>
-                Stay: <strong className="text-slate-900">{selectedRoom.name}</strong> · {nights} Nts ({checkIn} to {checkOut})
-              </div>
-              <div className="text-emerald-700 font-semibold">
-                Direct Saving: ₹{price.totalDirectSavings.toLocaleString('en-IN')}
-              </div>
-            </div>
-
-            {/* The 3 Required Confirmation Options */}
-            <div className="space-y-4">
-              {/* Option A: Instant Online Payment via UPI / Card */}
-              <div className="p-5 rounded-2xl border-2 border-slate-200 hover:border-[#C5A880] transition-all bg-white hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="p-3 bg-slate-900 text-[#C5A880] rounded-xl shrink-0 mt-0.5">
+            <div className="space-y-3.5">
+              {/* Option A */}
+              <div className="p-4 sm:p-5 rounded-2xl border-2 border-slate-200 bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 bg-slate-900 text-[#C5A880] rounded-xl shrink-0 mt-0.5">
                     <QrCode className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-slate-900">
-                        Option A: Instant Online Payment via UPI / Card
+                      <h2 className="text-sm sm:text-base font-bold text-slate-900">
+                        Option A: Instant Online Payment
                       </h2>
-                      <span className="text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
-                        Guaranteed Room
-                      </span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Pay instantly via Google Pay, PhonePe, Paytm, BHIM UPI, or Cards. Guarantees your room reservation 100% with immediate digital voucher.
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      GPay, PhonePe, Paytm, BHIM UPI, or Cards. Guarantees your room reservation 100%.
                     </p>
                   </div>
                 </div>
@@ -691,30 +628,27 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <button
                   type="button"
                   onClick={() => handleFinalizeBooking('online')}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-2 shadow"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow"
                 >
                   <span>Pay ₹{price.totalDirectAmount.toLocaleString('en-IN')}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#C5A880]" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
                 </button>
               </div>
 
-              {/* Option B: Pay at Hotel (Credit Card Not Required) */}
-              <div className="p-5 rounded-2xl border-2 border-slate-200 hover:border-[#C5A880] transition-all bg-white hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="p-3 bg-amber-50 text-amber-800 rounded-xl shrink-0 mt-0.5 border border-amber-200">
+              {/* Option B */}
+              <div className="p-4 sm:p-5 rounded-2xl border-2 border-slate-200 bg-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 bg-amber-50 text-amber-800 rounded-xl shrink-0 mt-0.5 border border-amber-200">
                     <Building className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-slate-900">
+                      <h2 className="text-sm sm:text-base font-bold text-slate-900">
                         Option B: Pay at Hotel
                       </h2>
-                      <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-900 px-2 py-0.5 rounded">
-                        No Card Required
-                      </span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Zero advance payment required today. Pay by cash, card, or UPI at check-in. Instant reservation confirmation voucher issued and synced to your WhatsApp.
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Zero advance payment required today. Pay at check-in. Instant confirmation synced to WhatsApp.
                     </p>
                   </div>
                 </div>
@@ -722,30 +656,27 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <button
                   type="button"
                   onClick={() => handleFinalizeBooking('pay_at_hotel')}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-[#C5A880] hover:bg-[#d8bf9b] text-slate-950 font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-2 shadow"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-[#C5A880] hover:bg-[#d8bf9b] text-slate-950 font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow"
                 >
                   <span>Confirm Pay at Hotel</span>
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 </button>
               </div>
 
-              {/* Option C: Book Instantly via WhatsApp Concierge */}
-              <div className="p-5 rounded-2xl border-2 border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="p-3 bg-emerald-500 text-white rounded-xl shrink-0 mt-0.5">
+              {/* Option C */}
+              <div className="p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 bg-emerald-50/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 bg-emerald-500 text-white rounded-xl shrink-0 mt-0.5">
                     <MessageCircle className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-emerald-950">
-                        Option C: Book via WhatsApp Concierge
+                      <h2 className="text-sm sm:text-base font-bold text-emerald-950">
+                        Option C: Book via WhatsApp
                       </h2>
-                      <span className="text-[10px] font-bold uppercase bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded">
-                        Direct Hotel Manager Line
-                      </span>
                     </div>
-                    <p className="text-xs text-emerald-800 mt-1">
-                      Opens official WhatsApp chat with pre-filled check-in dates, room tier, and guest details. Talk directly to hotel management for custom requests or early check-in.
+                    <p className="text-xs text-emerald-800 mt-0.5">
+                      Opens WhatsApp chat with pre-filled check-in details. Talk directly to hotel management.
                     </p>
                   </div>
                 </div>
@@ -753,9 +684,9 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <button
                   type="button"
                   onClick={() => handleFinalizeBooking('whatsapp')}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-2 shadow"
+                  className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shrink-0 flex items-center justify-center gap-1.5 shadow"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4 shrink-0" />
                   <span>Chat on WhatsApp</span>
                 </button>
               </div>
@@ -763,12 +694,11 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
           </div>
         )}
 
-        {/* STEP 4: Confirmed Reservation Voucher */}
+        {/* STEP 4: Voucher */}
         {step === 4 && (
-          <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden print:m-0 print:border-none print:shadow-none">
-            {/* Confirmation Header Banner */}
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl overflow-hidden print:m-0 print:border-none">
             <div className="bg-[#0F172A] text-white p-6 sm:p-8 text-center relative">
-              <div className="w-12 h-12 bg-emerald-500 text-slate-950 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <div className="w-12 h-12 bg-emerald-500 text-slate-950 rounded-full flex items-center justify-center mx-auto mb-2.5 shadow-lg">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <span className="text-xs font-semibold tracking-widest uppercase text-[#C5A880]">
@@ -777,72 +707,49 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
               <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">
                 Thank You, {fullName}!
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1">
-                Your direct booking at SG GRAND Hotel & Suites is confirmed.
-              </p>
-              <div className="mt-3 inline-block px-4 py-1.5 rounded-full bg-slate-800 border border-[#C5A880]/50 text-xs font-mono font-bold text-[#C5A880]">
-                Booking Reference: {confirmedBookingRef}
+              <div className="mt-3 inline-block px-3.5 py-1 rounded-full bg-slate-800 border border-[#C5A880]/50 text-xs font-mono font-bold text-[#C5A880]">
+                Booking Ref: {confirmedBookingRef}
               </div>
             </div>
 
-            {/* Printable Voucher Content */}
-            <div className="p-6 sm:p-8 space-y-6">
-              {/* Hotel & Stay Summary Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 border-b border-slate-200 text-xs text-slate-700">
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Property Details</h3>
+            <div className="p-5 sm:p-8 space-y-5 text-xs text-slate-700">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4 border-b border-slate-200">
+                <div>
+                  <h3 className="text-[11px] font-bold uppercase text-slate-400">Property</h3>
                   <div className="font-bold text-slate-900 text-sm">SG GRAND Hotel & Suites</div>
-                  <p>Godugupet, Opp. Brundavan Theater</p>
-                  <p>Machilipatnam, Andhra Pradesh 521001</p>
-                  <p>Phone: <strong>+91 94418 65555</strong></p>
+                  <p>Godugupet, Opp. Brundavan Theater, Machilipatnam</p>
+                  <p>Ph: <strong>+91 94418 65555</strong></p>
                 </div>
-
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Guest & ID Details</h3>
+                <div>
+                  <h3 className="text-[11px] font-bold uppercase text-slate-400">Guest</h3>
                   <div className="font-bold text-slate-900 text-sm">{fullName}</div>
                   <p>Phone: {phone}</p>
-                  <p>Email: {email}</p>
-                  <p>Govt ID to Present: <strong>{govtIdType}</strong></p>
-                  <p>Estimated Arrival: {arrivalTime}</p>
+                  <p>ID: <strong>{govtIdType}</strong></p>
                 </div>
               </div>
 
-              {/* Stay Dates & Room Details */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                 <div>
-                  <span className="text-slate-500 block">Check-In</span>
-                  <strong className="text-slate-900 text-sm">{checkIn}</strong>
-                  <span className="text-[10px] text-slate-400 block">From 12:00 PM</span>
+                  <span className="text-slate-400 block text-[10px]">Check-In</span>
+                  <strong className="text-slate-900 text-xs">{checkIn}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Check-Out</span>
-                  <strong className="text-slate-900 text-sm">{checkOut}</strong>
-                  <span className="text-[10px] text-slate-400 block">Until 11:00 AM</span>
+                  <span className="text-slate-400 block text-[10px]">Check-Out</span>
+                  <strong className="text-slate-900 text-xs">{checkOut}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Room Type</span>
-                  <strong className="text-slate-900 text-sm">{selectedRoom.name}</strong>
-                  <span className="text-[10px] text-slate-400 block">{roomsCount} Room(s)</span>
+                  <span className="text-slate-400 block text-[10px]">Room</span>
+                  <strong className="text-slate-900 text-xs">{selectedRoom.name}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Guests</span>
-                  <strong className="text-slate-900 text-sm">{adults} Adults</strong>
-                  <span className="text-[10px] text-slate-400 block">{children} Children</span>
+                  <span className="text-slate-400 block text-[10px]">Guests</span>
+                  <strong className="text-slate-900 text-xs">{adults} Adults</strong>
                 </div>
               </div>
 
-              {/* Financial Bill Breakdown */}
-              <div className="rounded-2xl border border-slate-200 p-4 text-xs space-y-2">
-                <div className="flex justify-between text-slate-600">
-                  <span>Base Room Rate ({roomsCount} Room × {nights} Nights):</span>
-                  <span>₹{price.totalDirectBase.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Goods & Services Tax (GST 12%):</span>
-                  <span>₹{price.gstAmount.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between font-bold text-sm text-slate-900 pt-2 border-t border-slate-200">
-                  <span>Total Amount:</span>
+              <div className="rounded-xl border border-slate-200 p-3.5 space-y-1.5">
+                <div className="flex justify-between font-bold text-sm text-slate-900">
+                  <span>Total Amount (Inc 12% GST):</span>
                   <span className="text-emerald-700 font-sans">
                     ₹{price.totalDirectAmount.toLocaleString('en-IN')}
                   </span>
@@ -855,32 +762,14 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 </div>
               </div>
 
-              {/* Important Check-in Instructions */}
-              <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200 text-xs text-amber-950 space-y-1">
-                <div className="font-bold flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-amber-700" />
-                  <span>Important Check-in Instructions</span>
-                </div>
-                <p>
-                  • Please present your {govtIdType} at front desk reception upon arrival.
-                </p>
-                <p>
-                  • Free covered car parking with 24/7 CCTV surveillance is available on the ground floor.
-                </p>
-                <p>
-                  • Need late check-in or station pickup cab? Reach our 24/7 concierge at <strong>+91 94418 65555</strong>.
-                </p>
-              </div>
-
-              {/* Action Buttons: Print Voucher & Sync to WhatsApp */}
-              <div className="pt-2 flex flex-wrap items-center justify-between gap-3 print:hidden">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5 print:hidden">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl flex items-center gap-2 transition-colors border border-slate-300"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 border border-slate-300 min-h-[44px]"
                 >
                   <Printer className="w-4 h-4 text-slate-600" />
-                  <span>Print Booking Voucher</span>
+                  <span>Print Voucher</span>
                 </button>
 
                 <a
@@ -894,7 +783,7 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                   })}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl flex items-center gap-2 transition-colors shadow"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow min-h-[44px]"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Sync with WhatsApp Concierge</span>
@@ -904,27 +793,26 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
           </div>
         )}
 
-        {/* Realistic Simulated UPI / Card Payment Modal for Option A */}
+        {/* UPI Modal */}
         {showUpiModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200">
-              <div className="text-center mb-5">
-                <div className="w-12 h-12 bg-slate-900 text-[#C5A880] rounded-2xl flex items-center justify-center mx-auto mb-2">
-                  <QrCode className="w-6 h-6" />
+            <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
+              <div className="text-center mb-4">
+                <div className="w-10 h-10 bg-slate-900 text-[#C5A880] rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <QrCode className="w-5 h-5" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-slate-900">
+                <h3 className="text-base font-serif font-bold text-slate-900">
                   Instant Direct Payment
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Pay ₹{price.totalDirectAmount.toLocaleString('en-IN')} to SG GRAND Hotel & Suites
+                  Pay ₹{price.totalDirectAmount.toLocaleString('en-IN')} to SG GRAND Hotel
                 </p>
               </div>
 
-              {/* Simulated UPI QR Code */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center mb-4 text-center">
-                <div className="w-44 h-44 bg-white p-3 rounded-xl border border-slate-300 shadow-inner flex items-center justify-center mb-2">
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col items-center justify-center mb-4 text-center">
+                <div className="w-40 h-40 bg-white p-2 rounded-xl border border-slate-300 shadow-inner flex items-center justify-center mb-2">
                   <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=9441865555@upi&pn=SG%20GRAND%20Hotel&am=2688&cu=INR"
+                    src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=9441865555@upi&pn=SG%20GRAND%20Hotel&am=2688&cu=INR"
                     alt="UPI Payment QR Code"
                     className="w-full h-full object-contain"
                   />
@@ -932,21 +820,17 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <span className="text-xs font-mono font-bold text-slate-800">
                   UPI ID: 9441865555@upi
                 </span>
-                <span className="text-[11px] text-slate-500">
-                  Scan with GPay, PhonePe, Paytm, or BHIM
-                </span>
               </div>
 
-              {/* Fast Simulated Payment Action */}
               <div className="space-y-2">
                 <button
                   type="button"
                   disabled={isProcessingPayment}
                   onClick={handleCompleteOnlinePayment}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow transition-all disabled:opacity-50"
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow min-h-[44px]"
                 >
                   {isProcessingPayment ? (
-                    <span>Verifying UPI Transaction...</span>
+                    <span>Verifying Transaction...</span>
                   ) : (
                     <>
                       <span>Simulate Successful UPI Payment</span>
@@ -958,9 +842,9 @@ export const BookingFlowPage: React.FC<BookingFlowPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowUpiModal(false)}
-                  className="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
+                  className="w-full py-2 text-xs font-semibold text-slate-500"
                 >
-                  Cancel / Choose Other Option
+                  Cancel
                 </button>
               </div>
             </div>
